@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
-#[Broadcast]
 class Task
 {
     #[ORM\Id]
@@ -28,6 +27,9 @@ class Task
 
     #[ORM\Column(enumType: TaskType::class)]
     private ?TaskType $type = null;
+
+    #[ORM\Column]
+    private ?bool $isDone = null;
 
     public function getId(): ?int
     {
@@ -78,6 +80,18 @@ class Task
     public function setType(TaskType $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function isDone(): ?bool
+    {
+        return $this->isDone;
+    }
+
+    public function setIsDone(bool $isDone): static
+    {
+        $this->isDone = $isDone;
 
         return $this;
     }

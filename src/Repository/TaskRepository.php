@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Task;
+use App\Enum\TaskPriority;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,4 +41,17 @@ class TaskRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+        public function findByPriority(?TaskPriority $priority): array
+        {
+            $qb = $this->createQueryBuilder('t');
+
+            if($priority !== null){
+                $qb
+                ->andWhere('t.priorityLevel = :priority')
+                ->setParameter('priority', $priority);
+            }
+
+            return $qb->getQuery()->getResult();
+        }
 }
