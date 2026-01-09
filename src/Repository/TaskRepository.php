@@ -42,16 +42,11 @@ class TaskRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-        public function findByPriority(?TaskPriority $priority): array
+        public function findByPriority(TaskPriority $priority): array
         {
-            $qb = $this->createQueryBuilder('t');
-
-            if($priority !== null){
-                $qb
+            return $this->createQueryBuilder('t')
                 ->andWhere('t.priorityLevel = :priority')
-                ->setParameter('priority', $priority);
-            }
-
-            return $qb->getQuery()->getResult();
+                ->setParameter('priority', $priority)
+                ->getQuery()->getResult();
         }
 }
