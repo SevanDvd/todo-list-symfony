@@ -3,58 +3,49 @@
 {% block title %}Task index{% endblock %}
 
 {% block body %}
-    <h1>Task index</h1>
+    <h1>To-do List</h1>
 
-    <table class="table">
+    <div class="table-container">
+        <table class="table">
 
-        {{ form_start(priorityFilterForm, { attr: { 'data-turbo': 'false' } }) }}
-            {{ form_row(priorityFilterForm) }}
-            <button>Trier</button>
-        {{ form_end(priorityFilterForm) }}
-        
+            {{ form_start(priorityFilterForm, { attr: { 'data-turbo': 'false'} }) }}
+                {{ form_row(priorityFilterForm.priority) }}
+                <button class="btn">Trier</button>
+            {{ form_end(priorityFilterForm) }}
+            
+            <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>{{ task.priorityLevel.value }}</td>
+                    <td>{{ task.type.value }}</td>
+                    <td>
+                        <form method="post" action="{{ path('app_task_toggle', {id : task.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ task.id) }}">
+                            <input class="checkbox" type="checkbox" {% if task.isDone %} checked {% endif %} onchange="this.form.submit()">
+                        </form>
+                    </td>
+                    
+                    <td>
+                        <a class="btn" href="{{ path('app_task_edit', {'id': task.id}) }}">edit</a>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ path('app_task_delete', {'id': task.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ task.id) }}">
+                            <button class="btn">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
 
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>PriorityLevel</th>
-                <th>Type</th>
-                <th>fait ?</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for task in tasks %}
-            <tr>
-                <td>{{ task.id }}</td>
-                <td>{{ task.title }}</td>
-                <td>{{ task.description }}</td>
-                <td>{{ task.priorityLevel.value }}</td>
-                <td>{{ task.type.value }}</td>
-                <td>
-                    <form method="post" action="{{ path('app_task_toggle', {id : task.id}) }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ task.id) }}">
-                        <input type="checkbox" {% if task.isDone %} checked {% endif %} onchange="this.form.submit()">
-                    </form>
-                </td>
-                
-                <td>
-                    <a href="{{ path('app_task_show', {'id': task.id}) }}">show</a>
-                    <a href="{{ path('app_task_edit', {'id': task.id}) }}">edit</a>
-
-                    <form method="post" action="{{ path('app_task_delete', {'id': task.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ task.id) }}">
-                        <button class="btn">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_task_new') }}">Create new</a>
+    <a href="{{ path('app_task_new') }}" class="btn">Create new</a>
 {% endblock %}

@@ -17,7 +17,10 @@ class TaskFilterPriorityType extends AbstractType
             ->add('priority', EnumType::class,[
             'class' => TaskPriority::class,
             'required' => false,
-            'placeholder' => 'Niveau de priorité'
+            'placeholder' => 'Niveau de priorité',
+            'attr' =>[
+                'class' => 'select input'
+            ]
             ]);
     }
 
